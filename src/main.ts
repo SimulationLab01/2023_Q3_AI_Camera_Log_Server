@@ -35,7 +35,7 @@ async function main() {
 		try {
 			function resolve_single_added_data(post_data: any){
 				const { time, user, device } = post_data
-				const date = new Date(time)
+				const date = time ? new Date(time) : new Date()
 				const date_str = date_to_format1(date)	
 				return {
 					time: date_str,
@@ -55,11 +55,11 @@ async function main() {
 
 			await database.insert_items('punch_log',
 				['time', 'user_id', 'device_id'], added_data)
+			await manager.upload(added_data)
 			res.send(JSON.stringify({ message: "success" }))
 		} catch (error) {
 			handle_err(error)
 		}
-
 	})
 
 	startup.post("/api/punch_logs/upload", async (req, res, handle_err) => {

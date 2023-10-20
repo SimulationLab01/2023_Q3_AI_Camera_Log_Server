@@ -11,14 +11,23 @@ export class UploadLogManager {
 		await this.client_connect_ready(secret['ftp-connection'])
 		await this.client_cwd(secret['ftp-working-directory'])
 	}
-	async upload(logs: punch_log[]) {
+	async upload_overwrite(logs: punch_log[]) {
 		const logs_str = logs.map(x=>{
 			const date = new Date(x.time)
 			const date_str = date_to_format1(date)
 			return `${date_str},, 讀卡機:${x.device_id},,,,員工編號:${x.user_id},`
-		}).join("\n")
+		}).join("\n") + "\n"
 		const logs_filename = `${date_to_format2(new Date())}.txt`
 		await this.client_put(logs_str, logs_filename, false)
+	}
+	async upload(logs: {time: string,device_id: string,user_id: string}[]) {
+		const logs_str = logs.map(x=>{
+			const date = new Date(x.time)
+			const date_str = date_to_format1(date)
+			return `${date_str},, 讀卡機:${x.device_id},,,,員工編號:${x.user_id},`
+		}).join("\n") + "\n"
+		const logs_filename = `${date_to_format2(new Date())}.txt`
+		await this.client_append(logs_str, logs_filename, false)
 	}
 	async close() {
 		await this.client_logout()
@@ -58,6 +67,14 @@ export class UploadLogManager {
 	private client_put(input: string | Buffer | NodeJS.ReadableStream, destPath: string, useCompression: boolean) {
 		return new Promise<void>((res, rej)=>{
 			this.client.put(input, destPath, useCompression, (err)=>{
+				if (err) { rej(err); return; }
+				res(undefined)
+			})
+		})
+	}
+	private client_append(input: string | Buffer | NodeJS.ReadableStream, destPath: string, useCompression: boolean) {
+		return new Promise<void>((res, rej)=>{
+			this.client.append(input, destPath, useCompression, (err)=>{
 				if (err) { rej(err); return; }
 				res(undefined)
 			})
