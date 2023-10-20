@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2023-10-19 04:09:37
+-- 產生時間： 2023-10-20 04:50:47
 -- 伺服器版本： 10.4.28-MariaDB
 -- PHP 版本： 8.2.4
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- 資料庫： `faceial-recognition-database`
 --
+CREATE DATABASE IF NOT EXISTS `faceial-recognition-database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `faceial-recognition-database`;
 
 -- --------------------------------------------------------
 

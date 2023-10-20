@@ -5,13 +5,13 @@ import * as path from 'path'
 
 const mysql_datatype_map = {
 	bigint: "number",
-	datetime: "unknown",
+	datetime: "string",
 	varchar: "string"
 } as const
 
 async function main() {
-	const target_database = secret.connection.database;
-	const connection_option = Object.assign({}, secret.connection, {
+	const target_database = secret['db-connection'].database;
+	const connection_option = Object.assign({}, secret['db-connection'], {
 		database: "information_schema"
 	})
 	const conn = await mysql.createConnection(connection_option)

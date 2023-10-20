@@ -7,7 +7,7 @@ import dedent from 'dedent'
 class Database {
 	private conn = null as unknown as Awaited<ReturnType<typeof mysql.createConnection>>
 	async init() {
-		this.conn = await mysql.createConnection(secret.connection)
+		this.conn = await mysql.createConnection(secret['db-connection'])
 	}
 	close() {
 		this.conn?.destroy()

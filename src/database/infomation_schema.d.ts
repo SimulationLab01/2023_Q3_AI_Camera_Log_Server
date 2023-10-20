@@ -3,7 +3,7 @@ export interface Tables {
 }
 export interface punch_log {
 	id: number
-	time: unknown
+	time: string
 	device_id: string
 	user_id: string
 }
