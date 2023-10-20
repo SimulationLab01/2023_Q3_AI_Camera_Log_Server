@@ -5,6 +5,8 @@ import { database } from './database/database'
 import { UploadLogManager } from './upload_log'
 import { date_to_format1 } from './utils'
 
+const ERROR_POST_DATA_INVALID = "post data invalid"
+
 async function main() {
 	const startup = express()
 	const manager = new UploadLogManager()
@@ -35,6 +37,9 @@ async function main() {
 		try {
 			function resolve_single_added_data(post_data: any){
 				const { time, user, device } = post_data
+				if(!time && ! user && ! device) {
+					throw ERROR_POST_DATA_INVALID
+				}
 				const date = time ? new Date(time) : new Date()
 				const date_str = date_to_format1(date)	
 				return {
@@ -64,17 +69,25 @@ async function main() {
 
 	startup.post("/api/punch_logs/upload", async (req, res, handle_err) => {
 		const data = await database.select_items('punch_log')
-		manager.upload(data)
+		manager.upload_overwrite(data)
 		res.send(JSON.stringify({ message: "success" }))
 	})
 
 	startup.use(((err, req, res, next) => {
 		if (req.path.startsWith('/api')) {
-			res.status(500)
-			res.send({
-				message: "Internal Server Error",
-				err
-			})
+			if(err == ERROR_POST_DATA_INVALID){
+				res.status(400)
+				res.send({
+					message: "Bad Request",
+					err
+				})
+			}else {
+				res.status(500)
+				res.send({
+					message: "Internal Server Error",
+					err
+				})
+			}
 		}
 		next(err)
 	}) as express.ErrorRequestHandler)

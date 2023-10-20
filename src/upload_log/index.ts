@@ -15,7 +15,7 @@ export class UploadLogManager {
 		const logs_str = logs.map(x=>{
 			const date = new Date(x.time)
 			const date_str = date_to_format1(date)
-			return `${date_str},, 讀卡機:${x.device_id},,,,員工編號:${x.user_id},`
+			return `${date_str},讀卡機:${x.device_id},員工編號:${x.user_id},`
 		}).join("\n") + "\n"
 		const logs_filename = `${date_to_format2(new Date())}.txt`
 		await this.client_put(logs_str, logs_filename, false)
@@ -24,7 +24,8 @@ export class UploadLogManager {
 		const logs_str = logs.map(x=>{
 			const date = new Date(x.time)
 			const date_str = date_to_format1(date)
-			return `${date_str},, 讀卡機:${x.device_id},,,,員工編號:${x.user_id},`
+
+			return `${date_str},讀卡機:${x.device_id},員工編號:${x.user_id}`
 		}).join("\n") + "\n"
 		const logs_filename = `${date_to_format2(new Date())}.txt`
 		await this.client_append(logs_str, logs_filename, false)
