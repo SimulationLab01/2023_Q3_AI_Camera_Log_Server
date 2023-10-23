@@ -15,7 +15,7 @@ export class UploadLogManager {
 		const logs_str = logs.map(x=>{
 			const date = new Date(x.time)
 			const date_str = date_to_format1(date)
-			return `${date_str},讀卡機:${x.device_id},員工編號:${x.user_id},`
+			return this.format_to_line(date_str, x.device_id, x.user_id)
 		}).join("\n") + "\n"
 		const logs_filename = `${date_to_format2(new Date())}.txt`
 		await this.client_put(logs_str, logs_filename, false)
@@ -24,8 +24,7 @@ export class UploadLogManager {
 		const logs_str = logs.map(x=>{
 			const date = new Date(x.time)
 			const date_str = date_to_format1(date)
-
-			return `${date_str},讀卡機:${x.device_id},員工編號:${x.user_id}`
+			return this.format_to_line(date_str, x.device_id, x.user_id)
 		}).join("\n") + "\n"
 		const logs_filename = `${date_to_format2(new Date())}.txt`
 		await this.client_append(logs_str, logs_filename, false)
@@ -33,6 +32,9 @@ export class UploadLogManager {
 	async close() {
 		await this.client_logout()
 		await this.client_destroy()
+	}
+	private format_to_line(date:string, device: string, user: string ){
+		return `${date},, 讀卡機:${device},,,, 員工編號:${user},`
 	}
 	private client_connect_ready(options?: FtpClient.Options, verbose=false) {
 		return new Promise<void>((res, rej) => {
@@ -104,5 +106,4 @@ export class UploadLogManager {
 			}
 		})
 	}
-	
 }
