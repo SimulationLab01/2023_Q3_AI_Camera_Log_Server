@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+	"files": [
+	],
+  "exclude": [
+    "./src/node",
+		"./src/types"
+  ]
+}

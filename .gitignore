@@ -3,3 +3,8 @@ yarn*
 database.db
 secret*
 test*
+env*
+user photo
+*.xlsx
+face*
+*.csv

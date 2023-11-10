@@ -1,0 +1,9 @@
+{
+  "id": "en-us",
+  "title": "Control Panel",
+	"nav_item": {
+		"about": "About",
+		"device": "Device",
+		"user": "User"
+	}
+}
