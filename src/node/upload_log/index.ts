@@ -1,7 +1,7 @@
 import FtpClient from 'ftp'
 import secret from '../secret'
 import { punch_log } from '../../shared/infomation_schema'
-import { date_to_format1, date_to_format2 } from '../utils'
+import { date_to_format1, date_to_format2 } from '../../shared/utils'
 
 export class UploadLogManager {
 	private client = null as unknown as FtpClient

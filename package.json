@@ -21,6 +21,7 @@
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.3",
 		"json-loader": "^0.5.7",
+		"mirada": "^0.0.15",
 		"postcss": "^8.4.31",
 		"postcss-loader": "^7.3.3",
 		"sass": "^1.69.5",

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributeAnchorTarget } from 'react'
 import { classes } from '../../utils'
 
 export const NavLink: React.FC<React.PropsWithChildren<{
@@ -7,6 +7,7 @@ export const NavLink: React.FC<React.PropsWithChildren<{
 	active?: boolean
 	action?: string | React.MouseEventHandler<HTMLAnchorElement>
 	expanded?: boolean
+	target?: HTMLAttributeAnchorTarget
 }>> = (props) => {
 	const type = props.type || ""
 	const disabled = props.disabled ? "disabled" : ""
@@ -17,6 +18,7 @@ export const NavLink: React.FC<React.PropsWithChildren<{
 	const role = ("dropdown-toggle" == type) ? "button" : undefined
 	const bs_toggle = ("dropdown-toggle" == type) ? "dropdown" : undefined
 	const expanded = ("dropdown-toggle" == type && props.expanded) ? true : undefined
+	const target = props.target;
 	return (
 		<a className={classes('nav-link', type, active, disabled)}
 			aria-current={current}
@@ -26,6 +28,7 @@ export const NavLink: React.FC<React.PropsWithChildren<{
 			role={role}
 			data-bs-toggle={bs_toggle}
 			aria-expanded={expanded}
+			target={target}
 		>{props.children}
 		</a>
 	)

@@ -1,7 +1,6 @@
 import 'bootstrap';
 import React, { StrictMode, useTransition } from "react";
 import { createRoot } from 'react-dom/client';
-import 'bootstrap/scss/bootstrap.scss'
 import './app.scss';
 import { Router } from './router';
 import { useTranslationContext } from './translation';
@@ -20,7 +19,7 @@ export const App: React.FC<{}> = function (props) {
 
 function main() {
 	const root = createRoot(document.getElementById('app')!);
-	if (mode == "development"){
+	if (false && mode == "development"){
 		root.render(<StrictMode><App /></StrictMode>);
 	}else{
 		root.render(<App />)

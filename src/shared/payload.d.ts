@@ -16,10 +16,16 @@ export type DeviceItemPayload = string
 
 export type UserItemPayload = string
 
-export type PunchLogAddPayload = PunchLogAddPayloadUnit | PunchLogAddPayloadUnit[]
+export type UserFaceFeaturePayload = string
 
-export type PunchLogAddPayloadUnit = {
+export type PunchLogAddPayload = {
 	user: string,
 	time: number,
-	device: string
+	device: string,
+	base64Image: string
+}
+
+export type PunchLogPayload = {
+	from: number,
+	to: number
 }

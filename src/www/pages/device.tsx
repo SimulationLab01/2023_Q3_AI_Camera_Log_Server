@@ -5,42 +5,34 @@ import { useTranslation } from '../translation'
 import type { TableType } from '../../shared/infomation_schema'
 import { Link, useLoaderData, useNavigate } from 'react-router-dom'
 import { DeviceCheckinPayload } from '../../shared/payload'
+import { fetchapi } from '../utils'
+import { TableGrid, TableGridHeader } from './tablegrid'
+import { DeviceIdLink, DeviceState, Div } from './utils'
 
 export const Device = createRouteComponent({
 	path: "device",
 	loader_handler: () => (async () => {
-		const res = await fetch("/api/device")
-		const data: TableType<"device">[] = await res.json()
-		return data
+		return await fetchapi("/api/device")
 	})
 }, (props) => {
 	const T = useTranslation()
 	useDocumentTitle(T.title)
 	const devices = useLoaderData() as TableType<"device">[]
 	const navigate = useNavigate()
-	const handle_submit = async(ev: React.FormEvent)=>{
+	const handle_submit = async (ev: React.FormEvent) => {
 		ev.preventDefault()
 		const form = ev.target as HTMLFormElement
 		const data = new FormData(form)
 		const device_id = data.get("device_id")?.toString()
 		const mac_address = data.get("mac_address")?.toString()
-		if (device_id && mac_address){
+		if (device_id && mac_address) {
 			const payload: DeviceCheckinPayload = {
 				device: device_id,
 				mac_address: mac_address
 			}
-			const res = await fetch("/api/device/checkin", {
-				method: "POST",
-				body: JSON.stringify(payload),
-				headers: {
-					"content-type": "application/json",
-					"accept": "application/json"
-				}
-			})
-			if(!res.ok){
-				console.error(await res.json())
-			}
-			navigate(0)
+			const data = await fetchapi("/api/device/checkin", payload)
+			console.log(data)
+			// navigate(0)
 		}
 	}
 	return (
@@ -50,24 +42,16 @@ export const Device = createRouteComponent({
 					<h1>
 						Device
 					</h1>
-					<div>
-						<div className='row'>
-							<div className='col-4'>id</div>
-							<div className='col-4'>mac_address</div>
-							<div className='col-2'>location</div>
-							<div className='col-2'>state</div>
-						</div>
-						{...devices.map(x => (
-							<div className='row'>
-								<div className='col-4'>
-									<Link to={`/device/item/${x.device_id}`}>{x.device_id}</Link>
-								</div>
-								<div className='col-4'>{x.mac_address}</div>
-								<div className='col-2'>{x.location}</div>
-								<div className='col-2'>{x.state == 1 ? "已註冊" : "未註冊"}</div>
-							</div>
-						))}
-					</div>
+					<TableGrid data={devices}>
+						<Div data-name={DeviceIdLink}>
+							id
+						</Div>
+						<div data-name="mac_address">mac_address</div>
+						<div data-name="location">location</div>
+						<TableGridHeader data-name={DeviceState}>
+							state
+						</TableGridHeader>
+					</TableGrid>
 				</div>
 				<div className='col-4'>
 					<div className='row'>
@@ -78,7 +62,7 @@ export const Device = createRouteComponent({
 							<input type="submit" className="form-control btn btn-primary" id="normal-submit" />
 						</div>
 						<div className="mb-3 form-floating">
-							<input type="text" className="form-control" id="floating-device_id" placeholder="" name="device_id"/>
+							<input type="text" className="form-control" id="floating-device_id" placeholder="" name="device_id" />
 							<label htmlFor="floating-device_id">device id</label>
 						</div>
 						<div className="mb-3 form-floating">

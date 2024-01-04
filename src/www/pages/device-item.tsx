@@ -1,67 +1,42 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useDocumentTitle } from 'usehooks-ts'
 import { createRouteComponent } from './route-component'
 import { useTranslation } from '../translation'
 import type { TableType } from '../../shared/infomation_schema'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import type { DeviceRegisterPayload } from '../../shared/payload'
+import { fetchapi } from '../utils'
+import { TableGrid } from './tablegrid'
+import { HorizontalItemGrid, ItemGridHeader } from './itemgrid'
+import { DeviceState, DeviceUsers } from './utils'
+
+type LoaderDataType = readonly [
+	TableType<"device">,
+	TableType<"device_user_with_name">[],
+	TableType<"department">[]
+]
 
 export const DeviceItem = createRouteComponent({
 	path: "device/item/:device",
 	loader_handler: () => (async (args) => {
-		const device = await ((async () => {
-			const res = await fetch("/api/device/item", {
-				method: "POST",
-				body: JSON.stringify(args.params.device),
-				headers: {
-					"content-type": "application/json",
-					"accept": "application/json"
-				}
-			})
-			if (!res.ok) {
-				throw Error(await res.json())
-			}
-			return (await res.json()) as TableType<"device">
-		})())
-		const device_departments = await ((async () => {
-			const res = await fetch("/api/device/department", {
-				method: "POST",
-				body: JSON.stringify(args.params.device),
-				headers: {
-					"content-type": "application/json",
-					"accept": "application/json"
-				}
-			})
-			if (!res.ok) {
-				throw Error(await res.json())
-			}
-			return (await res.json()) as TableType<"device_department">
-		})())
-		const all_departments = await ((async () => {
-			const res = await fetch("/api/department", {
-				method: "GET",
-				headers: {
-					"content-type": "application/json",
-					"accept": "application/json"
-				}
-			})
-			if (!res.ok) {
-				throw Error(await res.json())
-			}
-			return (await res.json()) as TableType<"department">
-		})())
-
-		return [device, device_departments, all_departments]
+		return [
+			await fetchapi(
+				"/api/device/item",
+				args.params.device
+			), await fetchapi(
+				"/api/device/user",
+				args.params.device
+			), await fetchapi(
+				"/api/department"
+			)
+		]
 	})
 }, (props) => {
 	const T = useTranslation()
 	useDocumentTitle(T.title)
 	const navigate = useNavigate()
-	const [device, device_departments, all_departments] = (
-		useLoaderData() as [
-			TableType<"device">,
-			TableType<"device_department">[],
-			TableType<"department">[]]
+	const [device, device_users, all_departments] = (
+		useLoaderData() as LoaderDataType
 	)
 	const handle_submit = async (ev: React.FormEvent) => {
 		ev.preventDefault()
@@ -81,19 +56,8 @@ export const DeviceItem = createRouteComponent({
 			location: location?.toString() || "",
 			departments: checks
 		}
-		const res = await fetch("/api/device/register", {
-			method: "POST",
-			body: JSON.stringify(payload),
-			headers: {
-				"content-type": "application/json",
-				"accept": "application/json"
-			}
-		})
-		if(res.ok){
-			navigate(0)
-		}else{
-			console.error(await res.json())
-		}
+		await fetchapi("/api/device/register", payload)
+		navigate(0)
 	}
 	return (
 		<div className='container'>
@@ -102,35 +66,19 @@ export const DeviceItem = createRouteComponent({
 					<h1>
 						Device
 					</h1>
-					<div className='row'>
-						<div className='col-4 text-end label-colon'>id</div>
-						<div className='col-6'>{device.device_id}</div>
-					</div>
-					<div className='row'>
-						<div className='col-4 text-end label-colon'>mac_address</div>
-						<div className='col-6'>{device.mac_address}</div>
-					</div>
-					<div className='row'>
-						<div className='col-4 text-end label-colon'>location</div>
-						<div className='col-6'>{device.location}</div>
-					</div>
-					<div className='row'>
-						<div className='col-4 text-end label-colon'>state</div>
-						<div className='col-6'>{device.state == 1 ? "已註冊" : "未註冊"}</div>
-					</div>
-					<div className='row'>
-						<div className='col-4 text-end label-colon'>department</div>
-					</div>
-					{
-						...all_departments
-							.filter(x => device_departments.some(xx => xx.department_id == x.department_id))
-							.map(x => (
-								<div className='row'>
-									<div className='col-4'></div>
-									<div className='col-6'>{x.department_id} {x.name}</div>
-								</div>
-							))
-					}
+					<HorizontalItemGrid item={device}>
+						<div className='text-end label-colon' data-name="device_id">id</div>
+						<div className='text-end label-colon' data-name="mac_address">mac_address</div>
+						<div className='text-end label-colon' data-name="location">location</div>
+						<ItemGridHeader className='text-end label-colon'
+							data-name={DeviceState}>
+							state
+						</ItemGridHeader>
+						<ItemGridHeader className='text-end label-colon'
+							data-name={()=>(<DeviceUsers {...{device_users}}/>)}>
+							users
+						</ItemGridHeader>
+					</HorizontalItemGrid>
 				</div>
 				<div className='col-6'>
 					<h1>Register</h1>
@@ -143,7 +91,7 @@ export const DeviceItem = createRouteComponent({
 						{
 							...all_departments.map(x => (
 								<div className="form-check">
-									<input className="form-check-input" type="checkbox" value="" id={`check-department-${x.department_id}`} name={`check-department-${x.department_id}`} defaultChecked={device_departments.some(xx => xx.department_id == x.department_id) ? true : undefined} />
+									<input className="form-check-input" type="checkbox" value="" id={`check-department-${x.department_id}`} name={`check-department-${x.department_id}`} defaultChecked={true} />
 									<label className="form-check-label" htmlFor={`check-department-${x.department_id}`}>
 										{x.department_id} {x.name}
 									</label>
@@ -156,3 +104,4 @@ export const DeviceItem = createRouteComponent({
 		</div>
 	)
 })
+

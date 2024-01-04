@@ -2,16 +2,22 @@ import * as mysql from 'mysql2/promise'
 import secret from '../secret'
 import { TableName, TableType, Tables } from '../../shared/infomation_schema'
 import dedent from 'dedent'
-import { date_to_format1 } from '../utils'
+import { date_to_format1, today, tomorrow } from '../../shared/utils'
 
 
 class Database {
-	private conn = null as unknown as Awaited<ReturnType<typeof mysql.createConnection>>
+	// private conn = null as unknown as Awaited<ReturnType<typeof mysql["createConnection"]>>
+	private conn = null as unknown as ReturnType<typeof mysql["createPool"]>
 	async init() {
-		this.conn = await mysql.createConnection(secret['db-connection'])
+		// this.conn = await mysql.createConnection(secret['db-connection'])
+		this.conn = mysql.createPool(Object.assign({}, secret['db-connection'], {
+
+		} as mysql.PoolOptions))
 	}
-	close() {
-		this.conn?.destroy()
+	async close() {
+		if(this.conn != null){
+			await this.conn.end()
+		}
 	}
 	async select_items<TTable extends TableName, TItems = TableType<TTable>[]>(
 		table: TTable,
@@ -22,9 +28,11 @@ class Database {
 		const [where_str, where_vals] = this.where_str_vals(where)
 		const limit_str = (! limit)? "" : `limit ?`
 		const query_str = `${select_str} ${where_str} ${limit_str}`
+		const query_vals = [...where_vals, ...((!limit)?[]:[limit])]
 		console.log(query_str)
+		console.log([...where_vals])
 		const [data, header]: [any, any] = await this.conn.query(
-			query_str, [...where_vals, ...((!limit)?[]:[limit])]
+			query_str, query_vals
 		)
 		return Array.from(data) as TItems
 	}
@@ -33,25 +41,18 @@ class Database {
 		table: TTable,
 		from_time?: Date, to_time?: Date
 	) {
-		const today = ((date) => {
-			date.setHours(0, 0, 0, 0)
-			return date
-		})(new Date())
-		const tomorrow = ((date) => {
-			date.setHours(0, 0, 0, 0)
-			date.setDate(date.getDate() + 1)
-			return date
-		})(new Date())
-		from_time = from_time || today
-		to_time = to_time || tomorrow
+		from_time = from_time || today()
+		to_time = to_time || tomorrow()
 		const from_time_str = date_to_format1(from_time || new Date())
 		const to_time_str = date_to_format1(to_time || new Date())
-		const [data, header]: any[] = await this.conn.query(
-			dedent`
-			select * from \`${table}\`
-			where \`time\` >= ? and \`time\` < ?
-			`, [from_time_str, to_time_str]
-		)
+		const select_str = `select * from \`${table}\``
+		const where_str = `where \`time\` >= ? and \`time\` < ?`
+		const where_vals = [from_time_str, to_time_str]
+		const query_str = `${select_str} ${where_str}`
+		const query_vals = [...where_vals]
+		console.log(query_str)
+		console.log(query_vals)
+		const [data, header]: any[] = await this.conn.query(query_str, query_vals)
 		return Array.from(data) as TItems
 	}
 
@@ -71,8 +72,8 @@ class Database {
 		const values = data.flatMap(x => [...cols.map(c => x[c])])
 		const query_str = `${insert_str} ${cols_str} ${values_str}`
 		console.log(query_str)
-		await this.conn.query(query_str, [...values])
-		return
+		const result = (await this.conn.query(query_str, [...values])) as mysql.ResultSetHeader[]
+		return result[0].insertId
 	}
 
 	async delete_items<
@@ -94,6 +95,7 @@ class Database {
 		const where_vals = where?.map(x => x[2]) || []
 		const query_str = `${delete_str} ${where_str}`
 		console.log(query_str)
+		console.log([...where_vals])
 		const [data, header]: [any, any] = await this.conn.query(
 			query_str, [...where_vals]
 		)
@@ -141,3 +143,11 @@ class Database {
 }
 
 export const database = new Database()
+
+export function esc(...name: string[]){
+	return name.map(x=>`\`${x}\``).join(".")
+}
+
+export function str(name: string){
+	return `"${name}"`
+}

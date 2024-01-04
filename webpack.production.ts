@@ -8,6 +8,7 @@ module.exports = merge(config, {
 	devtool: false,
 	optimization: {
 		minimize: true,
+		runtimeChunk: 'single',
 	},
 	output: {
 		path: path.join(__dirname, 'www'),

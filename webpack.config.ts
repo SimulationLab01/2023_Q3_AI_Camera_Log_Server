@@ -11,31 +11,36 @@ const config: webpack.Configuration = {
 	mode: mode,
 	devtool: 'inline-source-map',
 	entry: {
-		react: {
-			import: ['react', 'react-dom', 'react-router-dom', 'usehooks-ts']
-		},
-		utils: {
-			import: [
-				path.join(__dirname, 'src', 'www', 'utils')
-			]
-		},
-		bootstrap: {
-			import: [path.join(__dirname, 'node_modules', 'bootstrap/scss/bootstrap.scss')]
-		},
-		css: {
-			import: [path.join(__dirname, 'src', 'www', 'app.scss')],
-			dependOn: ["bootstrap"]
-		},
-		lib: {
-			import: ['bootstrap', 'jose']
-		},
-		translation: {
-			import: [path.join(__dirname, 'src', 'www', 'translation')],
-			dependOn: ['utils']
-		},
+		// opencv: {
+		// 	import: [
+		// 		path.join(__dirname, 'src', 'shared', 'opencv')
+		// 	]
+		// },
+		// react: {
+		// 	import: ['react', 'react-dom', 'react-router-dom', 'usehooks-ts']
+		// },
+		// utils: {
+		// 	import: [
+		// 		path.join(__dirname, 'src', 'www', 'utils')
+		// 	]
+		// },
+		// bootstrap: {
+		// 	import: [path.join(__dirname, 'node_modules', 'bootstrap/scss/bootstrap.scss')]
+		// },
+		// css: {
+		// 	import: [path.join(__dirname, 'src', 'www', 'app.scss')],
+		// 	dependOn: ["bootstrap"]
+		// },
+		// lib: {
+		// 	import: ['bootstrap', 'jose']
+		// },
+		// translation: {
+		// 	import: [path.join(__dirname, 'src', 'www', 'translation')],
+		// 	dependOn: ['utils']
+		// },
 		app: {
 			import: path.join(__dirname, 'src', 'www', 'app.tsx'),
-			dependOn: ['react', 'lib', 'css', 'utils', 'translation'],
+			// dependOn: ['react', 'lib', 'css', 'utils', 'translation'],
 		},
 	},
 	plugins: [
@@ -67,10 +72,21 @@ const config: webpack.Configuration = {
 	},
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js'],
+		fallback: {
+      fs: false,
+      path: false,
+      crypto: false
+    }
 	},
 	optimization: {
 		minimize: false,
-		runtimeChunk: 'single'
+		runtimeChunk: 'single',
+		splitChunks: {
+			chunks: 'all',
+			maxSize: 244 * 1024,
+			name: 'lib',
+			hidePathInfo: true
+		}
 	},
 	module: {
 		rules: [

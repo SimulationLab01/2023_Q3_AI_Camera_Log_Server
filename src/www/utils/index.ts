@@ -245,3 +245,20 @@ export function useLocalStorage<T>(key: string, init: T) {
 	}, [])
 	return [medium, save] as const
 }
+
+
+export async function fetchapi<T = any>(url: string, body?: any) {
+	const res = await fetch(url, {
+		method: "POST",
+		headers: {
+			"content-type": "application/json",
+			"accept": "application/json"
+		},
+		body: (body === undefined) ? undefined : JSON.stringify(body),
+	})
+	if (res.ok) {
+		return await res.json() as T
+	} else {
+		throw await res.json()
+	}
+}

@@ -7,8 +7,8 @@ const mysql_datatype_map = {
 	bigint: "number",
 	datetime: "string",
 	varchar: "string",
-	mediumblob: "Buffer",
-	varbinary: "Buffer",
+	mediumblob: "Buffer | string",
+	varbinary: "Buffer | string",
 	int: "number"
 } as const
 
