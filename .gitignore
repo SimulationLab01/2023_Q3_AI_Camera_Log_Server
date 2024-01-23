@@ -1,5 +1,11 @@
-node_modules
-yarn*
-database.db
-secret*
-test*
+/node_modules
+/yarn*
+/database.db
+/secret*
+/test*
+/env*
+/user photo
+/*.xlsx
+/face*
+/*.csv
+/dist*

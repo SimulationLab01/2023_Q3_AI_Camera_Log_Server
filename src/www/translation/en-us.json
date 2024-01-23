@@ -1,0 +1,12 @@
+{
+  "id": "en-us",
+  "title": "Control Panel",
+	"nav_item": {
+		"about": "About",
+		"device": "Device",
+		"punch_log": "Punch Log",
+		"punch_log_today": "Punch Log Today",
+		"phpmyadmin": "PHP My Admin",
+		"user": "User"
+	}
+}
