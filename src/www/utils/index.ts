@@ -247,17 +247,38 @@ export function useLocalStorage<T>(key: string, init: T) {
 }
 
 
-export async function fetchapi<T = any>(url: string, body?: any) {
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			"content-type": "application/json",
-			"accept": "application/json"
-		},
-		body: (body === undefined) ? undefined : JSON.stringify(body),
-	})
+export async function fetchapi<T = any>(method: "POST" | "GET", url: string, body?: any) {
+	// url = "http://" + location.hostname + ":9000" + url;
+	url = "http://20.196.65.188:9000" + url
+	const res = await (async function(){
+		if("GET"==method){
+			const param = new URLSearchParams(body)
+			url = url + "?" + param.toString()
+			return await fetch(url, {
+				method,
+				headers: {
+					"content-type": "application/json",
+					"accept": "application/json"
+				}
+			})
+		}else {
+			return await fetch(url, {
+				method,
+				headers: {
+					"content-type": "application/json",
+					"accept": "application/json"
+				},
+				body: (body === undefined) ? undefined : JSON.stringify(body),
+			})
+		}
+	})()
+	
 	if (res.ok) {
-		return await res.json() as T
+		const data = await res.json() as { code:number, result: T }
+		if(data.code==0){
+			return data.result
+		}
+		throw data.result
 	} else {
 		throw await res.json()
 	}

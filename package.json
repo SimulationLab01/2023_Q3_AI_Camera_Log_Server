@@ -5,7 +5,9 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "ts-node src/node/main.ts",
-		"test": "ts-node src/node/test.ts"
+		"test": "ts-node src/node/test.ts",
+		"compile-server": "tsc -p ./tsconfig.node.json",
+		"compile-webpage": "webpack -c ./webpack.production.ts"
 	},
 	"devDependencies": {
 		"@types/body-parser": "^1.19.2",
@@ -21,7 +23,6 @@
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.3",
 		"json-loader": "^0.5.7",
-		"mirada": "^0.0.15",
 		"postcss": "^8.4.31",
 		"postcss-loader": "^7.3.3",
 		"sass": "^1.69.5",
@@ -42,7 +43,6 @@
 		"bootstrap-icons": "^1.10.5",
 		"dedent": "^1.5.1",
 		"express": "^4.18.2",
-		"fluentreports": "^1.4.3",
 		"ftp": "^0.3.10",
 		"jose": "^4.14.4",
 		"mysql2": "^3.6.2",

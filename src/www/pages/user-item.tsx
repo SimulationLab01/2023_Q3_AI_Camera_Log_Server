@@ -13,8 +13,8 @@ type LoaderDataType = readonly [
 export const UserItem = createRouteComponent({
 	path: "user/item/:user",
 	loader_handler: () => (async (args) => {
-		const user = await fetchapi("/api/user/with_photo/item", args.params.user);
-		const features = await fetchapi("/api/user/face_feature", args.params.user); 
+		const user = await fetchapi("GET", "/api/user", args.params.user);
+		const features = await fetchapi("GET", "/api/user/face_feature", args.params.user); 
 		return [user, features] as const
 	})
 }, (props) => {

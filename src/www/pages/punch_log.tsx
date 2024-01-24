@@ -15,7 +15,7 @@ export const PunchLog = createRouteComponent({
 		const params = Object.fromEntries(new window.URLSearchParams(args.request.url.split('?', 2)[1]).entries())
 		const from = parseInt(params.from || MIN_MYSQL_TIME.toString())
 		const to = parseInt(params.to || MAX_MYSQL_TIME.toString())
-		const data = await fetchapi("/api/punch_log", { from, to })
+		const data = await fetchapi("GET", "/api/punch_log", { startDate: from, endDate: to })
 		return data
 	})
 }, (props) => {
@@ -63,23 +63,23 @@ export const PunchLog = createRouteComponent({
 						</div>
 					</form>
 					<TableGrid data={punchlogs}>
-						<TableGridHeader data-name={(x:typeof punchlogs[number])=>(<>
+						<TableGridHeader data-name={(x:any)=>(<>
 							{x.location}<br />
-							(<Link to={`/device/item/${x.device_id}`}>{x.device_id}</Link>)
+							(<Link to={`/device/item/${x.deviceId}`}>{x.deviceId}</Link>)
 						</>)}>
 							device
 						</TableGridHeader>
 						<TableGridHeader data-name={UserNameIdLink}>
 							user
 						</TableGridHeader>
-						<TableGridHeader data-name={(x:typeof punchlogs[number])=>date_to_format1(new Date(x.time))}>
+						<TableGridHeader data-name={(x: any)=>date_to_format1(new Date(x.punchTime))}>
 							time
 						</TableGridHeader>
-						<TableGridHeader data-name={(x:typeof punchlogs[number])=>{
-							const photo = x.photo as unknown as string
-							return photo ? <img src={`data:image/jpg;base64,${photo}`} style={{ width: "3em" }} /> : <></>
+						<TableGridHeader data-name={(x:any)=>{
+							const photo = x.recognitionPhoto as unknown as string
+							return photo ? <img src={x.recognitionPhoto} style={{ width: "3em" }} /> : <></>
 						}}>
-							time
+							photo
 						</TableGridHeader>
 					</TableGrid>
 				</div>

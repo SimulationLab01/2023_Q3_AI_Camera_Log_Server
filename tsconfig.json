@@ -1,13 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ],
-    "outDir": "dist"
-  },
-  "exclude": [
-    "./src/www",
-  ],
+	"compilerOptions": {
+		"resolveJsonModule": true
+	}
 }

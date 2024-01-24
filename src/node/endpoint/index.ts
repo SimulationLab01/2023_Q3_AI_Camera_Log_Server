@@ -3,10 +3,6 @@ import { isDevelopment } from '../constants'
 import { ExpressEndpoint } from './type'
 
 export * from './echo'
-export * from './user'
-export * from './department'
-export * from './device'
-export * from './punch_log'
 
 export const index: ExpressEndpoint = {
 	method: 'get',

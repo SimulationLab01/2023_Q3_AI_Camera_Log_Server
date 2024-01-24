@@ -13,19 +13,19 @@ export const Div: React.FC<React.PropsWithChildren<React.DetailedHTMLProps<React
 	return <div {...filtered_div_props}>{children}</div>
 }
 
-export const UserIdLink: React.FC<{ user_id: user['user_id'] }> = (x) => (
-	<Link to={`/user/item/${x.user_id}`}>{x.user_id}</Link>
+export const UserIdLink: React.FC<any> = (x) => (
+	<Link to={`/user/item/${x.userId}`}>{x.userId}</Link>
 )
 
-export const UserNameIdLink: React.FC<{ name: user['name'], user_id: user['user_id'] }> = (x) => (
+export const UserNameIdLink: React.FC<any> = (x) => (
 	<>
 		{x.name}<br />
-		(<Link to={`/user/item/${x.user_id}`}>{x.user_id}</Link>)
+		(<Link to={`/user/item/${x.userId}`}>{x.userId}</Link>)
 	</>
 )
 
-export const DeviceIdLink: React.FC<{ device_id: device['device_id'] }> = (x) => (
-	<Link to={`/device/item/${x.device_id}`}>{x.device_id}</Link>
+export const DeviceIdLink: React.FC<any> = (x) => (
+	<Link to={`/device/item/${x.deviceId}`}>{x.deviceId}</Link>
 )
 
 export const DeviceState: React.FC<{ state: device['state'] }> = (x) => (x.state == 1 ? "已註冊" : "未註冊")

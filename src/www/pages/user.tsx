@@ -11,7 +11,7 @@ import { UserIdLink } from './utils'
 export const User = createRouteComponent({
 	path: "user",
 	loader_handler: () => (async () => {
-		return await fetchapi("/api/user/with_department")
+		return await fetchapi("GET", "/api/user")
 	})
 }, (props) => {
 	const T = useTranslation()
@@ -28,8 +28,8 @@ export const User = createRouteComponent({
 					<TableGrid data={users}>
 						<TableGridHeader data-name={UserIdLink}>id</TableGridHeader>
 						<div data-name="name" >name</div>
-						<div data-name="full_name" >fullname</div>
-						<div data-name="department_name" >department</div>
+						<div data-name="fullName" >fullname</div>
+						<div data-name={(x:any)=>x.department[0].name} >department</div>
 					</TableGrid>
 				</div>
 			</div>

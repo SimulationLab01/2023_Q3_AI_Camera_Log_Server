@@ -12,7 +12,7 @@ import { DeviceIdLink, DeviceState, Div } from './utils'
 export const Device = createRouteComponent({
 	path: "device",
 	loader_handler: () => (async () => {
-		return await fetchapi("/api/device")
+		return await fetchapi("GET", "/api/device")
 	})
 }, (props) => {
 	const T = useTranslation()
@@ -30,8 +30,8 @@ export const Device = createRouteComponent({
 				device: device_id,
 				mac_address: mac_address
 			}
-			const data = await fetchapi("/api/device/checkin", payload)
-			console.log(data)
+			// const data = await fetchapi("/api/device/checkin", payload)
+			// console.log(data)
 			// navigate(0)
 		}
 	}
@@ -46,7 +46,7 @@ export const Device = createRouteComponent({
 						<Div data-name={DeviceIdLink}>
 							id
 						</Div>
-						<div data-name="mac_address">mac_address</div>
+						<div data-name="macAddress">mac_address</div>
 						<div data-name="location">location</div>
 						<TableGridHeader data-name={DeviceState}>
 							state

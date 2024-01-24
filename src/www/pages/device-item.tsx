@@ -20,13 +20,13 @@ export const DeviceItem = createRouteComponent({
 	path: "device/item/:device",
 	loader_handler: () => (async (args) => {
 		return [
-			await fetchapi(
+			await fetchapi("GET",
 				"/api/device/item",
 				args.params.device
-			), await fetchapi(
-				"/api/device/user",
+			), await fetchapi("GET",
+				"/api/device",
 				args.params.device
-			), await fetchapi(
+			), await fetchapi("GET",
 				"/api/department"
 			)
 		]
@@ -56,7 +56,7 @@ export const DeviceItem = createRouteComponent({
 			location: location?.toString() || "",
 			departments: checks
 		}
-		await fetchapi("/api/device/register", payload)
+		await fetchapi("POST", "/api/device/register", payload)
 		navigate(0)
 	}
 	return (
