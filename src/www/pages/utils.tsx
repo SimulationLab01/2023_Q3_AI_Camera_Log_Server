@@ -34,6 +34,6 @@ export const DeviceUsers: React.FC<{ device_users: device_user_with_name[] }> = 
 	<TableGrid data={x.device_users}>
 		<TableGridHeader data-name={UserIdLink}><br /></TableGridHeader>
 		<div data-name="name"><br /></div>
-		<div data-name="full_name"><br /></div>
+		<div data-name="fullName"><br /></div>
 	</TableGrid>
 )

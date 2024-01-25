@@ -27,8 +27,8 @@ export const Header: React.FC<{}> = function (props) {
 							{T.nav_item.punch_log_today}
 						</DropdownLink>
 					</NavbarDropdown>
-					<NavbarRouteLink active={loc.pathname == '/facecam' ? true : undefined} to="facecam">facecam</NavbarRouteLink>
-					<NavbarLink action={`http://${location.hostname}:8081/phpmyadmin`} target="_blank">{T.nav_item.phpmyadmin}</NavbarLink>
+					{/* <NavbarRouteLink active={loc.pathname == '/facecam' ? true : undefined} to="facecam">facecam</NavbarRouteLink> */}
+					<NavbarLink action={`http://20.196.65.188:9000/api`} target="_blank">{T.nav_item.apidoc}</NavbarLink>
 					<NavbarRouteLink active={loc.pathname == '/about' ? true : undefined} to="about">{T.nav_item.about}</NavbarRouteLink>
 				</NavbarCollapse>
 			</Navbar>

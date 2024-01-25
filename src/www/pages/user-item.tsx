@@ -7,20 +7,21 @@ import { fetchapi } from '../utils'
 import { createRouteComponent } from './route-component'
 
 type LoaderDataType = readonly [
-	TableType<"user_with_photo">,
-	TableType<"user_face_feature_128">[]
+	any,
+	any[]
 ]
 export const UserItem = createRouteComponent({
 	path: "user/item/:user",
 	loader_handler: () => (async (args) => {
-		const user = await fetchapi("GET", "/api/user", args.params.user);
-		const features = await fetchapi("GET", "/api/user/face_feature", args.params.user); 
-		return [user, features] as const
+		const departments = await fetchapi<any[]>("GET", "/api/department");
+		const user = await fetchapi("GET", "/api/user/with_photo/item", {userId: args.params.user});
+		Object.assign(user, {departmentName: departments.find(x=>x.departmentId == user.departmentId).name})
+		return [user, []] as const
 	})
 }, (props) => {
 	const T = useTranslation()
 	useDocumentTitle(T.title)
-	const [user, features] = (
+	const [user, photos] = (
 		useLoaderData() as LoaderDataType
 	)
 	return (
@@ -32,21 +33,21 @@ export const UserItem = createRouteComponent({
 					</h1>
 					<div className='row'>
 						<div className='col-4 text-end label-colon'>id</div>
-						<div className='col-6'>{user.user_id}</div>
+						<div className='col-6'>{user.userId}</div>
 					</div>
 					<div className='row'>
-						<div className='col-4 text-end label-colon'>mac_address</div>
+						<div className='col-4 text-end label-colon'>name</div>
 						<div className='col-6'>{user.name}</div>
 					</div>
 					<div className='row'>
-						<div className='col-4 text-end label-colon'>location</div>
-						<div className='col-6'>{user.full_name}</div>
+						<div className='col-4 text-end label-colon'>full name</div>
+						<div className='col-6'>{user.fullName}</div>
 					</div>
 					<div className='row'>
 						<div className='col-4 text-end label-colon'>department</div>
-						<div className='col-6'>{user.department_id} {user.department_name}</div>
+						<div className='col-6'>{user.departmentId} {user.departmentName}</div>
 					</div>
-					<div className='row'>
+					{/* <div className='row'>
 						<div className='col-4 text-end label-colon'>features</div>
 					</div>
 					{
@@ -57,10 +58,14 @@ export const UserItem = createRouteComponent({
 								</div>
 							}))
 						}
-					
+					 */}
 				</div>
 				<div className='col-6'>
-					{!user.photo ? <></> : <img src={`data:image/jpg;base64,${user.photo}`} style={{ width: "100%" }} />}
+					{
+						user.photos.map((x:any)=>(
+							<img src={x} style={{ width: "100%" }} />
+						))
+					}
 				</div>
 			</div>
 		</div>

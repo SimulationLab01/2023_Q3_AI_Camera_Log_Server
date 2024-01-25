@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import pkg from './package.json'
+import 'webpack-dev-server'
 
 const __mode = process.env["WEBPACK_CONFIG_MODE"] as "development" | "none" | "production" | undefined
 const mode = __mode || 'development'
@@ -10,6 +11,15 @@ const mode = __mode || 'development'
 const config: webpack.Configuration = {
 	mode: mode,
 	devtool: 'inline-source-map',
+	devServer: {
+		port: 8080,
+		hot: true,
+		historyApiFallback: {
+			index: "/app.html",
+		},
+		liveReload: true,
+		
+	},
 	entry: {
 		// opencv: {
 		// 	import: [

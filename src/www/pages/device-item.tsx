@@ -11,24 +11,24 @@ import { HorizontalItemGrid, ItemGridHeader } from './itemgrid'
 import { DeviceState, DeviceUsers } from './utils'
 
 type LoaderDataType = readonly [
-	TableType<"device">,
-	TableType<"device_user_with_name">[],
-	TableType<"department">[]
+	any,
+	any[],
+	any[]
 ]
 
 export const DeviceItem = createRouteComponent({
 	path: "device/item/:device",
 	loader_handler: () => (async (args) => {
+		const devices:any[] = await fetchapi("GET",
+			"/api/device"
+		)
+		const item = devices.find(x=>x.deviceId == args.params.device)
+		console.log(item)
+		const item_users:string[] = item.users
+		const department:any[] = (await fetchapi("GET","/api/department"))
+		const users:any[] = (await fetchapi("GET","/api/user"))
 		return [
-			await fetchapi("GET",
-				"/api/device/item",
-				args.params.device
-			), await fetchapi("GET",
-				"/api/device",
-				args.params.device
-			), await fetchapi("GET",
-				"/api/department"
-			)
+			item, item_users.map(x=>users.filter(xx=>xx.userId==x)[0]), department
 		]
 	})
 }, (props) => {
@@ -51,10 +51,10 @@ export const DeviceItem = createRouteComponent({
 			.map(x => x.replace('check-department-', ''))
 		console.log(location)
 		console.log(checks)
-		const payload: DeviceRegisterPayload = {
-			device: device.device_id,
+		const payload = {
+			deviceId: device.deviceId,
 			location: location?.toString() || "",
-			departments: checks
+			users: []
 		}
 		await fetchapi("POST", "/api/device/register", payload)
 		navigate(0)
@@ -67,8 +67,8 @@ export const DeviceItem = createRouteComponent({
 						Device
 					</h1>
 					<HorizontalItemGrid item={device}>
-						<div className='text-end label-colon' data-name="device_id">id</div>
-						<div className='text-end label-colon' data-name="mac_address">mac_address</div>
+						<div className='text-end label-colon' data-name="deviceId">id</div>
+						<div className='text-end label-colon' data-name="macAddress">mac_address</div>
 						<div className='text-end label-colon' data-name="location">location</div>
 						<ItemGridHeader className='text-end label-colon'
 							data-name={DeviceState}>

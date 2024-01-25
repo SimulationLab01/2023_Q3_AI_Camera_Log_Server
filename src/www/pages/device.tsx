@@ -26,13 +26,13 @@ export const Device = createRouteComponent({
 		const device_id = data.get("device_id")?.toString()
 		const mac_address = data.get("mac_address")?.toString()
 		if (device_id && mac_address) {
-			const payload: DeviceCheckinPayload = {
-				device: device_id,
-				mac_address: mac_address
+			const payload = {
+				deviceId: device_id,
+				macAddress: mac_address
 			}
-			// const data = await fetchapi("/api/device/checkin", payload)
-			// console.log(data)
-			// navigate(0)
+			const data = await fetchapi("POST", "/api/device/checkin", payload)
+			console.log(data)
+			navigate(0)
 		}
 	}
 	return (

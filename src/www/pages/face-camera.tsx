@@ -5,7 +5,7 @@ import { createRouteComponent } from './route-component'
 import e from 'express'
 // import { cv480 as cv, waitCvRuntimeInitialized } from '../../shared/opencv'
 
-export const FaceCamera = createRouteComponent({
+const FaceCamera = createRouteComponent({
 	path: "facecam",
 }, (props) => {
 	const T = useTranslation()
